@@ -1,184 +1,393 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+* {
+  box-sizing: border-box;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+body {
+  margin: 0;
+  min-height: 100vh;
 }
 
-#center {
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app {
+  --bg: rgb(255, 243, 212);
+  --panel: rgba(255, 250, 235, 0.96);
+  --panel-strong: rgba(255, 252, 242, 0.98);
+  --text: #2f2418;
+  --muted: #6b5a46;
+  --accent: #8a5a2b;
+  --accent-soft: rgba(138, 90, 43, 0.12);
+  --border: rgba(90, 64, 38, 0.14);
+  --shadow: 0 22px 60px rgba(110, 78, 47, 0.12);
+  --shadow-soft: 0 12px 30px rgba(110, 78, 47, 0.08);
+  --canvas-bg: rgba(255, 252, 242, 0.98);
+  --chip-bg: rgba(138, 90, 43, 0.1);
+
+  min-height: 100vh;
+  padding: clamp(16px, 2vw, 32px);
+  display: grid;
+  grid-template-columns: minmax(300px, 1.02fr) minmax(320px, 1.08fr);
+  gap: clamp(16px, 2vw, 24px);
+  align-items: stretch;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.app.dark {
+  --bg: #10182b;
+  --panel: rgba(18, 24, 38, 0.98);
+  --panel-strong: rgba(24, 30, 48, 0.99);
+  --text: #f3f6fa;
+  --muted: #b6bed6;
+  --accent: #ffe6a7;
+  --accent-soft: rgba(255, 230, 167, 0.13);
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 24px 70px rgba(16, 24, 43, 0.55);
+  --shadow-soft: 0 16px 40px rgba(16, 24, 43, 0.35);
+  --canvas-bg: rgba(18, 24, 38, 0.98);
+  --chip-bg: rgba(255, 230, 167, 0.10);
+}
+
+.app.dark .note-list,
+.app.dark .note-editor,
+.app.dark .canvas-panel,
+.app.dark [data-note-card],
+.app.dark [data-theme-card] {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.app > * {
+  min-width: 0;
+}
+
+.app :where(.note-list, .note-editor, .toolbar, .search, .controls, .tag-row, .markdown, article, section) {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--panel);
+  box-shadow: var(--shadow-soft);
+}
+
+.app :where(.note-list, .note-editor, article, section) {
+  overflow: hidden;
+}
+
+.app :where(button, input, textarea, select) {
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+  color: var(--text);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.app :where(button, input, textarea, select):focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.app button {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.app button:hover {
+  transform: translateY(-1px);
+}
+
+.app .toolbar,
+.app .note-list,
+.app .note-editor {
+  padding: clamp(18px, 2vw, 24px);
+}
+
+.app .toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  background: linear-gradient(90deg, rgba(252, 247, 225, 0.96), rgba(252, 221, 175, 0.92));
+}
+.app.dark .toolbar {
+  background: linear-gradient(90deg, rgba(0, 0, 41, 0.96), rgba(0, 0, 0, 0.92));
 }
 
-#next-steps {
+.app .toolbar h1,
+.app .toolbar h2,
+.app .note-editor h2,
+.app .note-list h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.4vw, 1.35rem);
+}
+
+.app .toolbar p,
+.app .note-list p,
+.app .note-editor p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.app .toolbar .theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgb(white);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.app .search {
+  padding: 14px 16px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.app .search::placeholder {
+  color: var(--muted);
+}
+
+.app .controls,
+.app .tag-row,
+.app .markdown {
+  padding: 14px 16px;
+}
+
+.app .controls {
   display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+.app .controls button,
+.app .controls select,
+.app .controls input {
+  min-height: 44px;
+  padding: 10px 14px;
 }
 
-#next-steps ul {
-  list-style: none;
-  padding: 0;
+.app .controls button {
+  background: linear-gradient(135deg, var(--accent), #8b5cf6);
+  color: #fff;
+  border: 0;
+  box-shadow: var(--shadow);
+}
+
+.app .controls button.secondary {
+  background: var(--panel-strong);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.app .tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.app .tag-row span,
+.app .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--chip-bg);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.app .note-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.app [data-note-card] {
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: rgb(rgb(249, 249, 174));
+  box-shadow: var(--shadow-soft);
+}
+.app.dark [data-note-card] {
+  background:  rgba(14, 14, 29, 0.96);
+}
+
+.app [data-note-card].pinned {
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow: var(--shadow);
+}
+
+.app .note-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.app .note-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.app .note-card-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.app .pinned-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.app .note-card-header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.app .note-card-actions {
   display: flex;
   gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+  flex-wrap: wrap;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.app .note-card-actions button {
+  min-height: 36px;
+  padding: 8px 12px;
 }
 
-.ticks {
-  position: relative;
+.app .markdown {
+  margin-top: 12px;
+  color: var(--text);
+}
+
+.app .markdown ul {
+  padding-left: 18px;
+  margin: 10px 0 0;
+}
+
+.app .markdown strong {
+  color: var(--text);
+}
+
+.app .editor-stack {
+  display: grid;
+  gap: 14px;
+}
+
+
+.app .field-hint {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px auto 18px auto;
+  color: #2f2418;
+  font-size: 1.15rem;
+  font-weight: 800;
+  background: rgb(252, 252, 219);
+  padding: 14px 32px;
+  border-radius: 999px;
+  width: max-content;
+  min-width: 260px;
+  border: 2px solid rgba(90, 64, 38, 0.16);
+  box-shadow: 0 2px 12px rgba(110, 78, 47, 0.08);
+  text-align: center;
+}
+
+.app.dark .field-hint {
+  background:  rgba(14, 14, 29, 0.96);
+  color: #f3f6fa;
+}
+
+.app .editor-stack textarea,
+.app .editor-stack input {
   width: 100%;
+  padding: 12px 14px;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+.app .editor-stack textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+.app .canvas-panel {
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: rgb(250, 250, 207);
+}
+
+.app.dark .canvas-panel {
+  background: rgba(14, 14, 29, 0.96);
+}
+
+.app .canvas-panel canvas {
+  width: 100%;
+  min-height: 240px;
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+  background: rgb(250, 250, 207);
+}
+
+.app.dark .canvas-panel canvas {
+  background: rgba(0, 0, 24, 0.96);
+}
+
+.app .canvas-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.app .canvas-tools input[type="color"],
+.app .canvas-tools input[type="range"] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.app .canvas-tools button {
+  min-height: 40px;
+  padding: 8px 12px;
+}
+
+.app .empty-state {
+  padding: 22px 18px;
+  border-radius: 20px;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+  .app .toolbar {
+    align-items: start;
   }
 }
